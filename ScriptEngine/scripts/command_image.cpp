@@ -1,5 +1,5 @@
-﻿#include "command_image.h"
-#include "DxLib.h"
+﻿#include "dx_wrapper.h"
+#include "command_image.h"
 
 namespace {
     constexpr size_t SCRIPT_NUM = 3;
@@ -21,7 +21,7 @@ namespace amg
             return false;
         }
 
-        handle = LoadGraph(script[2].c_str());
+        handle = DxWrapper::LoadGraph(script[2].c_str());
 
         if (handle == -1) {
             return false;

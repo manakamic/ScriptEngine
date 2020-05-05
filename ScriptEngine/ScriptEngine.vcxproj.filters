@@ -54,6 +54,9 @@
     <ClCompile Include="scripts\amg_string.cpp">
       <Filter>ソース ファイル\scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\dx_wrapper.cpp">
+      <Filter>ソース ファイル\scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\scripts_data.h">
@@ -90,6 +93,9 @@
       <Filter>ヘッダー ファイル\scripts</Filter>
     </ClInclude>
     <ClInclude Include="scripts\amg_rect.h">
+      <Filter>ヘッダー ファイル\scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\dx_wrapper.h">
       <Filter>ヘッダー ファイル\scripts</Filter>
     </ClInclude>
   </ItemGroup>

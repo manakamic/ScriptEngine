@@ -1,6 +1,6 @@
-﻿#include <windows.h>
-#include "DxLib.h"
+﻿#include "dx_wrapper.h"
 #include "script_engine.h"
+#include <windows.h>
 #ifdef _DEBUG
 #include <crtdbg.h>
 #endif
@@ -22,11 +22,11 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    ChangeWindowMode(window_mode);
+    amg::DxWrapper::ChangeWindowMode(window_mode);
 
-    SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH);
+    amg::DxWrapper::SetGraphMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH);
 
-    if (DxLib_Init() == -1) { // ＤＸライブラリ初期化処理
+    if (amg::DxWrapper::DxLib_Init() == -1) { // ＤＸライブラリ初期化処理
         return -1; // エラーが起きたら直ちに終了
     }
 
@@ -36,19 +36,19 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
         return -1;
     }
 
-    SetDrawScreen(DX_SCREEN_BACK);
+    amg::DxWrapper::SetDrawScreen(amg::DxWrapper::DX_SCREEN_BACK);
 
-    while ((ProcessMessage() != -1) && !script_engine.IsExit()) {
+    while ((amg::DxWrapper::ProcessMessage() != -1) && !script_engine.IsExit()) {
         script_engine.Update();
 
-        ClearDrawScreen();
+        amg::DxWrapper::ClearDrawScreen();
         script_engine.Render();
-        ScreenFlip();
+        amg::DxWrapper::ScreenFlip();
     }
 
     script_engine.Destroy();
 
-    DxLib_End();
+    amg::DxWrapper::DxLib_End();
 
     return 0;
 }

@@ -1,10 +1,10 @@
-﻿#include "input_manager.h"
-#include "DxLib.h"
+﻿#include "dx_wrapper.h"
+#include "input_manager.h"
 
 namespace {
     constexpr unsigned int dx_mouse_config_num = static_cast<unsigned int>(amg::InputManager::KeyConfig::EXIT);
     constexpr int dx_mouse_config[dx_mouse_config_num] = {
-        MOUSE_INPUT_LEFT, MOUSE_INPUT_RIGHT
+        amg::DxWrapper::MOUSE_INPUT_LEFT, amg::DxWrapper::MOUSE_INPUT_RIGHT
     };
 
     int GetDxMouseConfig(const amg::InputManager::KeyConfig key_name)
@@ -18,10 +18,10 @@ namespace amg
     void InputManager::Update()
     {
         input_key.last = input_key.fresh;
-        input_key.fresh = CheckHitKey(KEY_INPUT_ESCAPE);
+        input_key.fresh = DxWrapper::CheckHitKey(DxWrapper::KEY_INPUT_ESCAPE);
 
         input_mouse.last = input_mouse.fresh;
-        input_mouse.fresh = GetMouseInput();
+        input_mouse.fresh = DxWrapper::GetMouseInput();
     }
 
     bool InputManager::IsClick() const

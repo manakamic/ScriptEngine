@@ -156,6 +156,7 @@
     <ClCompile Include="scripts\command_image.cpp" />
     <ClCompile Include="scripts\command_label.cpp" />
     <ClCompile Include="scripts\command_message.cpp" />
+    <ClCompile Include="scripts\dx_wrapper.cpp" />
     <ClCompile Include="scripts\input_manager.cpp" />
     <ClCompile Include="Scripts\scripts_data.cpp" />
     <ClCompile Include="scripts\script_engine.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="scripts\command_image.h" />
     <ClInclude Include="scripts\command_label.h" />
     <ClInclude Include="scripts\command_message.h" />
+    <ClInclude Include="scripts\dx_wrapper.h" />
     <ClInclude Include="scripts\input_manager.h" />
     <ClInclude Include="scripts\amg_rect.h" />
     <ClInclude Include="Scripts\scripts_data.h" />

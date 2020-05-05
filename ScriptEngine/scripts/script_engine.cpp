@@ -1,17 +1,14 @@
-﻿#include "script_engine.h"
+﻿#include "dx_wrapper.h"
+#include "script_engine.h"
 #include "scripts_data.h"
 #include "input_manager.h"
-#include "amg_string.h"
 #include "command_label.h"
 #include "command_image.h"
 #include "command_choice.h"
 #include "command_message.h"
 #include "command_draw.h"
-#include "DxLib.h"
+#include "amg_string.h"
 #include <algorithm>
-
-// 同名の #define が定義されてしまっているので、置換を回避する
-#undef GetMessage
 
 namespace {
     // スクリプト コマンド
@@ -167,7 +164,7 @@ namespace amg
 
         cursor_image_handle = handle;
 
-        SetMouseDispFlag(FALSE);
+        DxWrapper::SetMouseDispFlag(DxWrapper::FALSE);
 
         return true;
     }
@@ -187,11 +184,11 @@ namespace amg
 
     bool ScriptEngine::InitializeStrings()
     {
-        SetFontSize(FONT_SIZE);
+        DxWrapper::SetFontSize(FONT_SIZE);
 
         auto screen_depth = 0;
 
-        if (GetScreenState(&screen_width, &screen_height, &screen_depth) != 0) {
+        if (DxWrapper::GetScreenState(&screen_width, &screen_height, &screen_depth) != 0) {
             return false;
         }
 
@@ -206,14 +203,14 @@ namespace amg
         choice_window_left = screen_center_x - CHOICE_WINDOW_WIDTH / 2;
         choice_window_right = choice_window_left + CHOICE_WINDOW_WIDTH;
 
-        message_window_color = GetColor(128, 128, 255);
-        message_string_color = GetColor(255, 255, 255);
+        message_window_color = DxWrapper::GetColor(128, 128, 255);
+        message_string_color = DxWrapper::GetColor(255, 255, 255);
 
-        choice_normal_color = GetColor(64, 64, 255);
-        choice_select_color = GetColor(128, 128, 255);
+        choice_normal_color = DxWrapper::GetColor(64, 64, 255);
+        choice_select_color = DxWrapper::GetColor(128, 128, 255);
 
 #ifdef _DEBUG
-        message_area_color = GetColor(255, 0, 0);
+        message_area_color = DxWrapper::GetColor(255, 0, 0);
 #endif
 
         return true;
@@ -238,7 +235,7 @@ namespace amg
     {
         input_manager->Update();
 
-        GetMousePoint(&(cursor_x), &(cursor_y));
+        DxWrapper::GetMousePoint(&(cursor_x), &(cursor_y));
 
         auto is_update_message = false;
 
@@ -651,34 +648,34 @@ namespace amg
             return;
         }
 
-        DrawGraph(cursor_x, cursor_y, cursor_image_handle, TRUE);
+        DxWrapper::DrawGraph(cursor_x, cursor_y, cursor_image_handle, DxWrapper::TRUE);
     }
 
     void ScriptEngine::RenderImage() const
     {
         for (auto&& draw : draw_list) {
-            DrawGraph(draw->GetX(), draw->GetY(), draw->GetHandle(), TRUE);
+            DxWrapper::DrawGraph(draw->GetX(), draw->GetY(), draw->GetHandle(), DxWrapper::TRUE);
         }
     }
 
     void ScriptEngine::RenderMessageWindow() const
     {
-        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 64);
+        DxWrapper::SetDrawBlendMode(DxWrapper::DX_BLENDMODE_ALPHA, 64);
 
-        DrawBox(message_window_left, MSG_WINDOW_TOP,
+        DxWrapper::DrawBox(message_window_left, MSG_WINDOW_TOP,
             message_window_right, MSG_WINDOW_BOTTOM,
-            message_window_color, TRUE);
+            message_window_color, DxWrapper::TRUE);
 
 #ifdef _DEBUG
         // デバッグ中はメッセージエリアに色を付けて確認する
         for (auto&& message : message_list) {
             const auto area = message->GetArea();
 
-            DrawBox(area.left, area.top, area.right, area.bottom, message_area_color, TRUE);
+            DxWrapper::DrawBox(area.left, area.top, area.right, area.bottom, message_area_color, DxWrapper::TRUE);
         }
 #endif
 
-        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        DxWrapper::SetDrawBlendMode(DxWrapper::DX_BLENDMODE_NOBLEND, 0);
     }
 
     void ScriptEngine::RenderMessage() const
@@ -687,16 +684,16 @@ namespace amg
             const auto area = message->GetArea();
 
             // 表示エリアを制御して 1文字づつ描画する
-            SetDrawArea(area.left, area.top, area.right, area.bottom);
-            DrawString(area.left, area.top,
+            DxWrapper::SetDrawArea(area.left, area.top, area.right, area.bottom);
+            DxWrapper::DrawString(area.left, area.top,
                 message->GetMessage().c_str(), message_string_color);
         }
 
         // 表示エリアを全画面に戻す
-        SetDrawArea(0, 0, screen_width, screen_height);
+        DxWrapper::SetDrawArea(0, 0, screen_width, screen_height);
 
         if (is_click_wait_visible) {
-            DrawGraph(click_wait_x, click_wait_y, click_wait_image_handle, TRUE);
+            DxWrapper::DrawGraph(click_wait_x, click_wait_y, click_wait_image_handle, DxWrapper::TRUE);
         }
     }
 
@@ -705,13 +702,13 @@ namespace amg
         for (auto&& choice : choice_list) {
             const auto area = choice->GetArea();
 
-            DrawBox(area.left, area.top, area.right, area.bottom, choice->GetColor(), TRUE);
+            DxWrapper::DrawBox(area.left, area.top, area.right, area.bottom, choice->GetColor(), DxWrapper::TRUE);
         }
 
         for (auto&& choice : choice_list) {
             const auto area = choice->GetArea();
 
-            DrawString(area.left, area.top,
+            DxWrapper::DrawString(area.left, area.top,
                 choice->GetMessage().c_str(), message_string_color);
         }
     }
