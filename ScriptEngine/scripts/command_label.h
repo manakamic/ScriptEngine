@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿//!
+//! @file command_label.h
+//!
+//! @brief 'l' スクリプトを処理するクラス定義
+//!
+#pragma once
 
 #include "command_base.h"
 #include <string>

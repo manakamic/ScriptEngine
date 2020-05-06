@@ -1,4 +1,9 @@
-﻿#include "dx_wrapper.h"
+﻿//!
+//! @file script_engine.cpp
+//!
+//! @brief スクリプトエンジンの実装
+//!
+#include "dx_wrapper.h"
 #include "script_engine.h"
 #include "scripts_data.h"
 #include "input_manager.h"
@@ -106,7 +111,7 @@ namespace amg
         Destroy();
     }
 
-    bool ScriptEngine::Initialize(const char* path)
+    bool ScriptEngine::Initialize(const TCHAR* path)
     {
         if (path == nullptr || input_manager != nullptr || scripts_data != nullptr) {
             return false;

@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿//!
+//! @file amg_rect.h
+//!
+//! @brief 簡易的な Rect 処理を提供する
+//!
+#pragma once
 
 namespace amg
 {

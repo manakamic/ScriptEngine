@@ -1,4 +1,9 @@
-﻿#include "command_message.h"
+﻿//!
+//! @file command_message.cpp
+//!
+//! @brief 'm' スクリプトを処理するクラス実装
+//!
+#include "command_message.h"
 
 namespace {
     constexpr size_t SCRIPT_NUM = 2;

@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿//!
+//! @file command_base.h
+//!
+//! @brief スクリプトを処理する基底クラス定義
+//!
+#pragma once
 
 #include <vector>
 #include <string>

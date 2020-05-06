@@ -1,5 +1,11 @@
-﻿#pragma once
+﻿//!
+//! @file scripts_data.h
+//!
+//! @brief スクリプトの読み込み定義
+//!
+#pragma once
 
+#include <tchar.h>
 #include <vector>
 #include <string>
 #include <memory>
@@ -18,7 +24,7 @@ namespace amg
         ScriptsData& operator=(const ScriptsData& right) = default;
         ScriptsData& operator=(ScriptsData&& right) noexcept = default;
 
-        bool LoadJson(const char* path);
+        bool LoadJson(const TCHAR* path);
         std::vector<std::string> GetScript(const unsigned int index) const;
         unsigned int GetScriptNum()  const;
 

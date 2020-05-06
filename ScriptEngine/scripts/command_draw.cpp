@@ -1,4 +1,9 @@
-﻿#include "command_draw.h"
+﻿//!
+//! @file command_draw.cpp
+//!
+//! @brief 'd' スクリプトを処理するクラス実装
+//!
+#include "command_draw.h"
 #include "amg_string.h"
 
 namespace {

@@ -1,4 +1,9 @@
-﻿#include "command_label.h"
+﻿//!
+//! @file command_label.cpp
+//!
+//! @brief 'l' スクリプトを処理するクラス実装
+//!
+#include "command_label.h"
 
 namespace {
     constexpr size_t SCRIPT_NUM = 2;

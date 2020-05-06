@@ -1,4 +1,9 @@
-﻿#include "amg_string.h"
+﻿//!
+//! @file amg_string.cpp
+//!
+//! @brief std::string に対してのユーティリティ処理実装
+//!
+#include "amg_string.h"
 
 namespace amg
 {

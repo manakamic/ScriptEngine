@@ -1,4 +1,9 @@
-﻿#include "dx_wrapper.h"
+﻿//!
+//! @file input_manager.cpp
+//!
+//! @brief DX ライブラリの入力処理をスクリプトエンジン用に処理する実装
+//!
+#include "dx_wrapper.h"
 #include "input_manager.h"
 
 namespace {

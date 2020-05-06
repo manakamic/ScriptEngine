@@ -1,4 +1,9 @@
-﻿#include "command_choice.h"
+﻿//!
+//! @file command_choice.cpp
+//!
+//! @brief 'c' スクリプトを処理するクラス実装
+//!
+#include "command_choice.h"
 
 namespace {
     constexpr size_t SCRIPT_NUM = 3;

@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿//!
+//! @file input_manager.h
+//!
+//! @brief DX ライブラリの入力処理をスクリプトエンジン用に処理する定義
+//!
+#pragma once
 
 namespace amg
 {

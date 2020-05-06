@@ -1,4 +1,9 @@
-﻿#include "dx_wrapper.h"
+﻿//!
+//! @file command_image.cpp
+//!
+//! @brief 'i' スクリプトを処理するクラス実装
+//!
+#include "dx_wrapper.h"
 #include "command_image.h"
 
 namespace {

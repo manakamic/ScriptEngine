@@ -1,6 +1,12 @@
-﻿#pragma once
+﻿//!
+//! @file script_engine.h
+//!
+//! @brief スクリプトエンジンの定義
+//!
+#pragma once
 
 #include "amg_rect.h"
+#include <tchar.h>
 #include <vector>
 #include <string>
 #include <memory>
@@ -26,7 +32,7 @@ namespace amg
         ScriptEngine& operator=(const ScriptEngine& right) = default;
         ScriptEngine& operator=(ScriptEngine&& right) noexcept = default;
 
-        bool Initialize(const char* path);
+        bool Initialize(const TCHAR* path);
         void Destroy();
 
         void Update();
