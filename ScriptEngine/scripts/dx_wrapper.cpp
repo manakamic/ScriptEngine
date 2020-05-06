@@ -8,6 +8,11 @@
 
 namespace amg
 {
+    int DxWrapper::SetMainWindowText(const TCHAR* window_text)
+    {
+        return DxLib::SetMainWindowText(window_text);
+    }
+
     int DxWrapper::ChangeWindowMode(int flag)
     {
         return DxLib::ChangeWindowMode(flag);

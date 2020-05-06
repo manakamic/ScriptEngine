@@ -46,6 +46,7 @@ namespace amg
         static constexpr int DX_BLENDMODE_NOBLEND = 0;
         static constexpr int DX_BLENDMODE_ALPHA = 1;
 
+        static int SetMainWindowText(const TCHAR* window_text);
         static int ChangeWindowMode(int flag);
         static int SetGraphMode(int screen_size_x, int screen_size_y, int color_bit_depth, int refresh_rate = 60);
 
