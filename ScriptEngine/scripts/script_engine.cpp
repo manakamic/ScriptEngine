@@ -3,6 +3,59 @@
 //!
 //! @brief スクリプトエンジンの実装
 //!
+//! @details スクリプトの解説
+//!
+//! コマンド: @
+//! 構文: "@"
+//! コマンド単体で使用します。
+//! クリック待ち状態になります。
+//!
+//! コマンド: m [message]
+//! 構文: "m, メッセージ"
+//! メッセージを 1 行描画します。
+//! メッセージは最大 3 行です。
+//! (コマンドを続けて指定出来ます)
+//! クリックや選択肢の決定で全ての c コマンドと m コマンドがクリアされます。
+//! 4 つ目以降の m コマンドは、先頭の m コマンドを上書きします。
+//!
+//! コマンド: w [wait]
+//! 構文: "w, 数値"
+//! 数値分のフレーム数を待ちます。
+//!
+//! コマンド: j [jump]
+//! 構文: "j, ラベル"
+//! l コマンドが設定された行へスクリプト処理を移動させます。
+//! l コマンドで指定されていないラベルはエラーとなります。
+//!
+//! コマンド: l [label]
+//! 構文: "l, ラベル"
+//! j コマンドでスクリプトの処理を移動させる為のラベルを指定します。
+//! j コマンドで使用されなければ何も行わない行となります。
+//!
+//! コマンド: c [choise]
+//! 構文: "c, ラベル, 選択肢メッセージ"
+//! 選択肢メッセージを 1 行描画します。
+//! 選択肢メッセージは最大 3 行です。
+//! (コマンドを続けて指定出来ます)
+//! 選択肢の決定で全ての c コマンドと m コマンドがクリアされます。
+//! 4 つ目以降の c コマンドは、先頭の c コマンドを上書きします。
+//! 選択肢の決定後は
+//!
+//! コマンド: i [image]
+//! 構文: "i, 画像ラベル, パス付の画像ファイル名"
+//! 画像を DX ライブラリのロード関数で処理します。
+//! ロード後の画像ハンドル値は画像ラベルで取得します。
+//!
+//! コマンド: d [draw]
+//! 構文: "d, 描画インデックス, 描画 X 座標, 描画 Y 座標, 画像ラベル"
+//! i コマンドで処理された画像を描画します。(画像ラベルで指定)
+//! 描画インデックスで指定された順番で表示します。
+//! d コマンドは重ねて描画を行います。(基本的に表示数の制限はありません)
+//! d コマンドの取り消しは、同じ描画インデックスの d コマンドで
+//! 処理を上書きをして行います。
+//! スクリーンの XY 座標を指定できます。スクリーンの左上が X:0 Y:0 となり
+//! X は右方向、Y は下方向に増加します。
+//!
 #include "dx_wrapper.h"
 #include "script_engine.h"
 #include "scripts_data.h"
@@ -111,17 +164,23 @@ namespace amg
         Destroy();
     }
 
+    //!
+    //! @fn bool ScriptEngine::Initialize(const TCHAR* path)
+    //! @brief スクリプトエンジンの初期化
+    //! @param[in] path パス付のスクリプト用 Json ファイル名
+    //! @return 処理の成否
+    //! @details スクリプトの事前の処理と
+    //! DX ライブラリの設定などを行い
+    //! スクリプトエンジンが動作する様にします。
+    //!
     bool ScriptEngine::Initialize(const TCHAR* path)
     {
         if (path == nullptr || input_manager != nullptr || scripts_data != nullptr) {
             return false;
         }
 
-        std::unique_ptr<InputManager> input(new InputManager());
-        input_manager = std::move(input);
-
-        std::unique_ptr<ScriptsData> data(new ScriptsData());
-        scripts_data = std::move(data);
+        input_manager.reset(new InputManager());
+        scripts_data.reset(new ScriptsData());
 
         if (!scripts_data->LoadJson(path)) {
             return false;
@@ -150,6 +209,11 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::IsExit() const
+    //! @brief DX ライブラリの キーチェックで ESC キーを判定
+    //! @return ESC キーが押されたか
+    //!
     bool ScriptEngine::IsExit() const
     {
         if (input_manager == nullptr) {
@@ -159,6 +223,11 @@ namespace amg
         return input_manager->IsExit();
     }
 
+    //!
+    //! @fn bool ScriptEngine::InitializeCursor()
+    //! @brief スクリプトエンジン用マウスカーソル画像の初期化
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::InitializeCursor()
     {
         auto handle = 0;
@@ -174,6 +243,11 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::InitializeClickWait()
+    //! @brief スクリプトエンジン用クリック待ち画像の初期化
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::InitializeClickWait()
     {
         auto handle = 0;
@@ -187,6 +261,11 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::InitializeStrings()
+    //! @brief スクリプトエンジン用文字列描画の初期化
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::InitializeStrings()
     {
         DxWrapper::SetFontSize(FONT_SIZE);
@@ -221,6 +300,12 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn void ScriptEngine::Destroy()
+    //! @brief 明示的なスクリプトエンジンの終了処理
+    //! @details 無理に呼び出す必要はありませんが
+    //! インスタンスを再利用したい場合などに呼び出します。
+    //!
     void ScriptEngine::Destroy()
     {
         input_manager.reset();
@@ -229,6 +314,17 @@ namespace amg
         scripts_data.reset();
         scripts_data = nullptr;
 
+        state = ScriptState::PARSING;
+        max_line = 0;
+        now_line = 0;
+        wait_count = 0;
+        cursor_x = 0;
+        cursor_y = 0;
+        cursor_image_handle = -1;
+        click_wait_image_handle = -1;
+        is_click_wait_visible = false;
+        is_message_output = false;
+
         image_list.clear();
         label_list.clear();
         choice_list.clear();
@@ -236,6 +332,11 @@ namespace amg
         draw_list.clear();
     }
 
+    //!
+    //! @fn void ScriptEngine::Update()
+    //! @brief スクリプトエンジンの更新処理
+    //! @details 毎フレーム呼び出す必要があります。
+    //!
     void ScriptEngine::Update()
     {
         input_manager->Update();
@@ -273,6 +374,12 @@ namespace amg
         }
     }
 
+    //!
+    //! @fn void ScriptEngine::PreParsing()
+    //! @brief スクリプトの事前解析
+    //! @details 'l' コマンド(ラベル)と 'i' コマンド(イメージ)を
+    //! 予め全て処理してリスト化します。
+    //!
     void ScriptEngine::PreParsing()
     {
         while (now_line >= 0 && now_line < max_line) {
@@ -298,6 +405,12 @@ namespace amg
         now_line = 0;
     }
 
+    //!
+    //! @fn void ScriptEngine::Parsing()
+    //! @brief スクリプトの解析
+    //! @details スクリプトを 1 行単位で処理します。
+    //! (インタープリタ方式)
+    //!
     void ScriptEngine::Parsing()
     {
         auto stop_parsing = false;
@@ -347,33 +460,43 @@ namespace amg
         }
     }
 
+    //!
+    //! @fn void ScriptEngine::UpdateMessage()
+    //! @brief 文字列を 1 文字づつ表示させる処理
+    //!
     void ScriptEngine::UpdateMessage()
     {
+        is_click_wait_visible = false;
+
         for (auto&& message : message_list) {
             const auto area = message->GetArea();
             const auto right_goal = message->GetRightGoal();
 
+            // クリックされたら全メッセージを表示
             if (input_manager->IsClick()) {
                 message->UpdateAreaRight(right_goal);
                 continue;
             }
 
+            // 右終端(全文字列)になるまで 1 文字サイズ分づつ足して行く
             if (area.right < right_goal) {
                 message->UpdateAreaRight(area.right + FONT_SIZE);
-                return;
+                return; // 1 文字分処理したらメソッド終了
             }
         }
 
+        // return せずに for 文が終わったなら全文字列を表示している
         is_message_output = false;
 
         if (state == ScriptState::CLICK_WAIT) {
             is_click_wait_visible = (click_wait_image_handle != -1);
         }
-        else {
-            is_click_wait_visible = false;
-        }
     }
 
+    //!
+    //! @fn void ScriptEngine::OnCommandClick()
+    //! @brief スクリプトの '@' コマンドを処理
+    //!
     void ScriptEngine::OnCommandClick()
     {
         if (choice_list.size() > 0) {
@@ -384,52 +507,18 @@ namespace amg
         }
     }
 
-    void ScriptEngine::ClickWait()
-    {
-        if (is_message_output) {
-            return;
-        }
-
-        if (input_manager->IsClick()) {
-            state = ScriptState::PARSING;
-            message_list.clear();
-        }
-    }
-
-    void ScriptEngine::ChoiceWait()
-    {
-        const auto is_click = input_manager->IsClick();
-
-        for (auto&& choice : choice_list) {
-            const auto area = choice->GetArea();
-            auto cursor_over = false;
-            auto color = choice_normal_color;
-
-            if (area.IsCollision(cursor_x, cursor_y)) {
-                // Choice がクリックされていたら処理は終了
-                if (is_click) {
-                    state = ScriptState::PARSING;
-                    now_line = choice->GetLineNumber();
-                    message_list.clear();
-                    choice_list.clear();
-                    return;
-                }
-
-                cursor_over = true;
-                color = choice_select_color;
-            }
-
-            choice->SetCursorOver(cursor_over);
-            choice->SetColor(color);
-        }
-    }
-
-    bool ScriptEngine::OnCommandWait(const std::vector<std::string>& script)
+    //!
+    //! @fn bool ScriptEngine::OnCommandWait(const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'w' コマンドを処理
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
+    bool ScriptEngine::OnCommandWait(const std::vector<std::string>& scripts)
     {
         auto wait = 0;
         auto result = false;
 
-        if (string::ToInt(script[1], wait)) {
+        if (string::ToInt(scripts[1], wait)) {
             wait_count = static_cast<unsigned int>(wait);
             state = ScriptState::TIME_WAIT;
             result = true;
@@ -438,24 +527,16 @@ namespace amg
         return result;
     }
 
-    void ScriptEngine::TimeWait()
-    {
-        if (is_message_output) {
-            return;
-        }
-
-        if (wait_count > 0) {
-            --wait_count;
-        }
-        else {
-            state = ScriptState::PARSING;
-        }
-    }
-
-    bool ScriptEngine::OnCommandJump(const std::vector<std::string>& script)
+    //!
+    //! @fn bool ScriptEngine::OnCommandJump(const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'j' コマンドを処理
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
+    bool ScriptEngine::OnCommandJump(const std::vector<std::string>& scripts)
     {
         auto line = 0U;
-        const auto result = GetLineNumber(script[1], line);
+        const auto result = GetLineNumber(scripts[1], line);
 
         if (result) {
             now_line = line;
@@ -464,51 +545,13 @@ namespace amg
         return result;
     }
 
-    bool ScriptEngine::CalculateMessageArea(const std::string& message, Rect& area, int& right_goal)
-    {
-        if (message.empty()) {
-            return false;
-        }
-
-        const auto line_index = static_cast<int>(message_list.size());
-        const auto message_top = MSG_WINDOW_TOP + MSG_LINE_GRID_HEIGHT * line_index;
-        const auto message_bottom = message_top + MSG_LINE_HEIGHT;
-
-        area.Set(message_window_left, message_top, message_window_left, message_bottom);
-
-        const auto string_lenght = static_cast<int>(std::strlen(message.c_str()));
-
-        right_goal = message_window_left + ((string_lenght + 1) * (FONT_SIZE / 2));
-
-        return true;
-    }
-
-    bool ScriptEngine::GetLineNumber(const std::string& str, unsigned int& line) const
-    {
-        for (auto&& label : label_list) {
-            if (label->GetLabel() == str) {
-                line = label->GetLineNumber();
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    bool ScriptEngine::GetImageHandle(const std::string& str, int& handle) const
-    {
-        for (auto&& image : image_list) {
-            if (image->GetLabel() == str) {
-                handle = image->GetHandle();
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
+    //!
+    //! @fn bool ScriptEngine::OnCommandLabel(unsigned int line, const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'l' コマンドを処理
+    //! @param[in] line スクリプトの行数
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::OnCommandLabel(unsigned int line, const std::vector<std::string>& scripts)
     {
         std::unique_ptr<CommandLabel> label(new CommandLabel(line, scripts));
@@ -522,6 +565,13 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::OnCommandImage(unsigned int line, const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'i' コマンドを処理
+    //! @param[in] line スクリプトの行数
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::OnCommandImage(unsigned int line, const std::vector<std::string>& scripts)
     {
         std::unique_ptr<CommandImage> image(new CommandImage(line, scripts));
@@ -535,6 +585,13 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::OnCommandChoice(unsigned int line, const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'c' コマンドを処理
+    //! @param[in] line スクリプトの行数
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::OnCommandChoice(unsigned int line, const std::vector<std::string>& scripts)
     {
         std::unique_ptr<CommandChoice> choice(new CommandChoice(line, scripts));
@@ -568,6 +625,13 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::OnCommandMessage(unsigned int line, const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'm' コマンドを処理
+    //! @param[in] line スクリプトの行数
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::OnCommandMessage(unsigned int line, const std::vector<std::string>& scripts)
     {
         std::unique_ptr<CommandMessage> message(new CommandMessage(line, scripts));
@@ -600,6 +664,13 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn bool ScriptEngine::OnCommandDraw(unsigned int line, const std::vector<std::string>& scripts)
+    //! @brief スクリプトの 'd' コマンドを処理
+    //! @param[in] line スクリプトの行数
+    //! @param[in] scripts スクリプトの内容
+    //! @return 処理の成否
+    //!
     bool ScriptEngine::OnCommandDraw(unsigned int line, const std::vector<std::string>& scripts)
     {
         std::unique_ptr<CommandDraw> draw(new CommandDraw(line, scripts));
@@ -638,6 +709,154 @@ namespace amg
         return true;
     }
 
+    //!
+    //! @fn void ScriptEngine::ClickWait()
+    //! @brief クリック待ち処理
+    //!
+    void ScriptEngine::ClickWait()
+    {
+        if (is_message_output) {
+            return;
+        }
+
+        if (input_manager->IsClick()) {
+            state = ScriptState::PARSING;
+            message_list.clear();
+        }
+    }
+
+    //!
+    //! @fn void ScriptEngine::ChoiceWait()
+    //! @brief 選択待ち処理
+    //!
+    void ScriptEngine::ChoiceWait()
+    {
+        const auto is_click = input_manager->IsClick();
+
+        for (auto&& choice : choice_list) {
+            const auto area = choice->GetArea();
+            auto cursor_over = false;
+            auto color = choice_normal_color;
+
+            // 選択エリア内にマウス座標がある
+            if (area.IsCollision(cursor_x, cursor_y)) {
+                // 選択エリアがクリックされていたら処理は終了
+                if (is_click) {
+                    state = ScriptState::PARSING;
+                    // 指定の行番号にする
+                    now_line = choice->GetLineNumber();
+                    // 全ての文字列表示をなくす
+                    message_list.clear();
+                    choice_list.clear();
+                    return;
+                }
+
+                cursor_over = true;
+                color = choice_select_color;
+            }
+
+            choice->SetCursorOver(cursor_over);
+            choice->SetColor(color);
+        }
+    }
+
+    //!
+    //! @fn void ScriptEngine::TimeWait()
+    //! @brief 時間待ち処理
+    //!
+    void ScriptEngine::TimeWait()
+    {
+        if (is_message_output) {
+            return;
+        }
+
+        if (wait_count > 0) {
+            --wait_count;
+        }
+        else {
+            state = ScriptState::PARSING;
+        }
+    }
+
+    //!
+    //! @fn bool ScriptEngine::CalculateMessageArea(const std::string& message, Rect& area, int& right_goal)
+    //! @brief メッセージ文字列より表示エリアや右終端を計算する
+    //! @param[in] message メッセージ文字列
+    //! @param[out] area メッセージ表示エリア
+    //! @param[out] right_goal メッセージ右終端
+    //! @return 処理の成否
+    //! @details メッセージの順番や文字数より表示エリアを計算します。
+    //! 表示エリアの右側は、初期値は左側と同値とします。
+    //! (数学的にはエリアは面積を持たない)
+    //! これは左側から 1 文字づつ表示していく仕様の為です。
+    //! 実際の右側の値は right_goal に格納します。
+    //!
+    bool ScriptEngine::CalculateMessageArea(const std::string& message, Rect& area, int& right_goal)
+    {
+        if (message.empty()) {
+            return false;
+        }
+
+        const auto line_index = static_cast<int>(message_list.size());
+        const auto message_top = MSG_WINDOW_TOP + MSG_LINE_GRID_HEIGHT * line_index;
+        const auto message_bottom = message_top + MSG_LINE_HEIGHT;
+
+        area.Set(message_window_left, message_top, message_window_left, message_bottom);
+
+        const auto string_lenght = static_cast<int>(std::strlen(message.c_str()));
+
+        right_goal = message_window_left + ((string_lenght + 1) * (FONT_SIZE / 2));
+
+        return true;
+    }
+
+    //!
+    //! @fn bool ScriptEngine::GetLineNumber(const std::string& str, unsigned int& line) const
+    //! @brief ラベル文字列より行番号を取得
+    //! @param[in] str ラベル文字列
+    //! @param[out] line ラベルが設定されている行番号
+    //! @return 処理の成否
+    //!
+    bool ScriptEngine::GetLineNumber(const std::string& str, unsigned int& line) const
+    {
+        for (auto&& label : label_list) {
+            if (label->GetLabel() == str) {
+                line = label->GetLineNumber();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //!
+    //! @fn bool ScriptEngine::GetImageHandle(const std::string& str, int& handle) const
+    //! @brief 画像ラベル文字列より画像ハンドルを取得
+    //! @param[in] str 画像ラベル文字列
+    //! @param[out] handle 画像ハンドル
+    //! @return 処理の成否
+    //! @details 画像ハンドルは、DX ライブラリの
+    //! 画像ロード関数で得られる描画用の値です。
+    //!
+    bool ScriptEngine::GetImageHandle(const std::string& str, int& handle) const
+    {
+        for (auto&& image : image_list) {
+            if (image->GetLabel() == str) {
+                handle = image->GetHandle();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //!
+    //! @fn void ScriptEngine::Render() const
+    //! @brief スクリプトの全ての描画処理
+    //! @details 毎フレーム呼び出す必要があります。
+    //!
     void ScriptEngine::Render() const
     {
         RenderImage();
@@ -647,6 +866,10 @@ namespace amg
         RenderCursor();
     }
 
+    //!
+    //! @fn void ScriptEngine::RenderCursor() const
+    //! @brief マウスカーソル画像の描画
+    //!
     void ScriptEngine::RenderCursor() const
     {
         if (-1 == cursor_image_handle) {
@@ -656,6 +879,10 @@ namespace amg
         DxWrapper::DrawGraph(cursor_x, cursor_y, cursor_image_handle, DxWrapper::TRUE);
     }
 
+    //!
+    //! @fn void ScriptEngine::RenderImage() const
+    //! @brief 'd' コマンドによる画像描画
+    //!
     void ScriptEngine::RenderImage() const
     {
         for (auto&& draw : draw_list) {
@@ -663,6 +890,10 @@ namespace amg
         }
     }
 
+    //!
+    //! @fn void ScriptEngine::RenderMessageWindow() const
+    //! @brief 'm' コマンドによる文字列用のウィンドウ描画
+    //!
     void ScriptEngine::RenderMessageWindow() const
     {
         DxWrapper::SetDrawBlendMode(DxWrapper::DX_BLENDMODE_ALPHA, 64);
@@ -683,6 +914,10 @@ namespace amg
         DxWrapper::SetDrawBlendMode(DxWrapper::DX_BLENDMODE_NOBLEND, 0);
     }
 
+    //!
+    //! @fn void ScriptEngine::RenderMessage() const
+    //! @brief 'm' コマンドによる文字列描画
+    //!
     void ScriptEngine::RenderMessage() const
     {
         for (auto&& message : message_list) {
@@ -702,14 +937,20 @@ namespace amg
         }
     }
 
+    //!
+    //! @fn void ScriptEngine::RenderChoice() const
+    //! @brief 'c' コマンドによる選択エリア付き文字列描画
+    //!
     void ScriptEngine::RenderChoice() const
     {
+        // 先に選択エリアを描画してしまう
         for (auto&& choice : choice_list) {
             const auto area = choice->GetArea();
 
             DxWrapper::DrawBox(area.left, area.top, area.right, area.bottom, choice->GetColor(), DxWrapper::TRUE);
         }
 
+        // 次に選択文字列を描画する
         for (auto&& choice : choice_list) {
             const auto area = choice->GetArea();
 

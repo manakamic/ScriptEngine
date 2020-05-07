@@ -67,8 +67,8 @@ namespace amg
         bool GetImageHandle(const std::string& str, int& handle) const;
 
         void OnCommandClick();
-        bool OnCommandWait(const std::vector<std::string>& script);
-        bool OnCommandJump(const std::vector<std::string>& script);
+        bool OnCommandWait(const std::vector<std::string>& scripts);
+        bool OnCommandJump(const std::vector<std::string>& scripts);
         bool OnCommandLabel(unsigned int line, const std::vector<std::string>& scripts);
         bool OnCommandImage(unsigned int line, const std::vector<std::string>& scripts);
         bool OnCommandChoice(unsigned int line, const std::vector<std::string>& scripts);
