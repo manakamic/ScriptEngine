@@ -1,4 +1,9 @@
-﻿#include "dx_wrapper.h"
+﻿//!
+//! @file main.cpp
+//!
+//! @brief アプリのエントリーポイント及びメインループ処理
+//!
+#include "dx_wrapper.h"
 #include "script_engine.h"
 #include <windows.h>
 #ifdef _DEBUG
@@ -41,6 +46,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     amg::DxWrapper::SetDrawScreen(amg::DxWrapper::DX_SCREEN_BACK);
 
+    // アプリのメインループ
     while ((amg::DxWrapper::ProcessMessage() != -1) && !script_engine.IsExit()) {
         script_engine.Update();
 
