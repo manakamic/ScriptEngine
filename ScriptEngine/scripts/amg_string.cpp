@@ -32,7 +32,7 @@ namespace amg
             while (first < str.size()) {
                 const std::string subStr(str, first, last - first);
 
-                split.push_back(subStr);
+                split.emplace_back(subStr);
 
                 first = last + delimiter.length();
                 last = str.find_first_of(delimiter, first);

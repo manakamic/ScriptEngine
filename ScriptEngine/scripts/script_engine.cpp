@@ -560,7 +560,7 @@ namespace amg
             return false;
         }
 
-        label_list.push_back(std::move(label));
+        label_list.emplace_back(std::move(label));
 
         return true;
     }
@@ -580,7 +580,7 @@ namespace amg
             return false;
         }
 
-        image_list.push_back(std::move(image));
+        image_list.emplace_back(std::move(image));
 
         return true;
     }
@@ -620,7 +620,7 @@ namespace amg
             choice_list.erase(choice_list.begin() + 0);
         }
 
-        choice_list.push_back(std::move(choice));
+        choice_list.emplace_back(std::move(choice));
 
         return true;
     }
@@ -656,7 +656,7 @@ namespace amg
             message_list.erase(message_list.begin() + 0);
         }
 
-        message_list.push_back(std::move(message));
+        message_list.emplace_back(std::move(message));
 
         // メッセージコマンドを処理したらメッセージ表示を有効にする
         is_message_output = true;
@@ -695,7 +695,7 @@ namespace amg
         const auto remove = std::remove_if(draw_list.begin(), draw_list.end(), check);
 
         draw_list.erase(remove, draw_list.end());
-        draw_list.push_back(std::move(draw));
+        draw_list.emplace_back(std::move(draw));
 
         // 描画リストが複数あるなら Index でソートする
         if (draw_list.size() >= 2) {
