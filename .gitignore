@@ -360,3 +360,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 ScriptEngine/dxlib
+ScriptEngine/Log.txt
