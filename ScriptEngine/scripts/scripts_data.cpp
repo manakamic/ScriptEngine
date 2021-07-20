@@ -57,7 +57,7 @@ namespace amg
             const auto utf16 = ConvertUTF8ToWide(utf8);
             const auto mbs = ConvertWideToMultiByte(utf16);
 
-            scripts->push_back(mbs);
+            scripts->emplace_back(mbs);
         }
 
         return true;
