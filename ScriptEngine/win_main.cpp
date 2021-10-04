@@ -14,8 +14,8 @@ namespace {
     constexpr auto SCREEN_WIDTH = 1280;
     constexpr auto SCREEN_HEIGHT = 720;
     constexpr auto SCREEN_DEPTH = 32;
-    constexpr auto SCRIPTS_JSON_PATH = "escape_from_amg.json";
-    constexpr auto WINDOW_TITLE = "AMG ScriptEngine Sample";
+    constexpr auto SCRIPTS_JSON_PATH = _T("escape_from_amg.json");
+    constexpr auto WINDOW_TITLE = _T("AMG ScriptEngine Sample");
 }
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)

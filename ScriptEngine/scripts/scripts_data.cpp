@@ -10,9 +10,9 @@
 #include <fstream>
 
 namespace {
-    constexpr auto EMPTY_STR = "";
+    constexpr auto EMPTY_STR = _T("");
     constexpr auto EMPTY_WSTR = L"";
-    constexpr auto DELIMITER = ", ";
+    constexpr auto DELIMITER = _T(", ");
 }
 
 namespace amg

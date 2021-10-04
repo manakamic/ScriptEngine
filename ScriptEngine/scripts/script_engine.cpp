@@ -70,19 +70,19 @@
 
 namespace {
     // スクリプト コマンド
-    constexpr auto COMMAND_A = '@';
-    constexpr auto COMMAND_M = 'm';
-    constexpr auto COMMAND_W = 'w';
-    constexpr auto COMMAND_J = 'j';
-    constexpr auto COMMAND_L = 'l';
-    constexpr auto COMMAND_C = 'c';
-    constexpr auto COMMAND_I = 'i';
-    constexpr auto COMMAND_D = 'd';
-    constexpr auto COMMAND_E = 'e';
+    constexpr auto COMMAND_A = _T('@');
+    constexpr auto COMMAND_M = _T('m');
+    constexpr auto COMMAND_W = _T('w');
+    constexpr auto COMMAND_J = _T('j');
+    constexpr auto COMMAND_L = _T('l');
+    constexpr auto COMMAND_C = _T('c');
+    constexpr auto COMMAND_I = _T('i');
+    constexpr auto COMMAND_D = _T('d');
+    constexpr auto COMMAND_E = _T('e');
 
     // マウスカーソル画像とクリック待ち画像を特定するラベル名
-    constexpr auto CURSOR_IMAGE_LABEL = "カーソル";
-    constexpr auto CLICK_WAIT_IMAGE_LABEL = "クリック待ち";
+    constexpr auto CURSOR_IMAGE_LABEL = _T("カーソル");
+    constexpr auto CLICK_WAIT_IMAGE_LABEL = _T("クリック待ち");
 
     constexpr auto FONT_SIZE = 24;
 
